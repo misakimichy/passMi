@@ -3,8 +3,17 @@
 #### _Capstone Project: Password manager application - last update: 02/28/2020_
 
 ## Description
-This is an End-to-End encrypted password manager.
+This is an End-to-End encrypted password manager using Web Cryptography API.
 
+Web Cryptography API is accessible by JavaScript only if its running in an secure origin web page:
+```
+    (https, *, *)
+    (wss, *, *)
+    (*, localhost, *)
+    (*, 127/8, *)
+    (*, ::1/128, *)
+    (file, *, —)
+```
 
 ### Project Purpose: 
 - Explore the knowledge of [Web Crypto API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API)

@@ -87,14 +87,12 @@ Favicon is made by [icongeek26](https://www.flaticon.com/authors/icongeek26) att
 ## Known Bugs
 - No known bugs
 
-## Currently working on
-`/inventory` route
 
 ## Support and contact details
-Misaki Koonce: misaki.koonce@gmail.com
+I welcome any feedbacks, comments and questions about this project. Email me to misaki.koonce@gmail.com
 
 ## Technologies Used
-Git, GitHub, Lucidchart, ReactJS, Redux
+Git, GitHub, ReactJS and Redux
 
 ## License
 Copyright © 2020 under the MIT License

@@ -10,8 +10,10 @@ class App extends Component {
   }
   _userInput = React.createRef()
 
-  generateHashValue = () => {
-    const data = 'QNimate'
+  generateHashValue = (e) => {
+    e.preventDefault()
+    console.log('hello')
+    const data = this._userInput.value
     const crypto = window.crypto || window.msCrypto
     if(crypto.subtle) {
       console.log("Cryptography API supported")
@@ -25,14 +27,14 @@ class App extends Component {
     }
   }
 
-  convertStringToArrayBuffer = (e) => {
-    e.preventDefault()
+  convertStringToArrayBuffer = (userInput) => {
     // Instantiate 8-bit unsigned integers
-    const bytes = new Uint8Array(this._userInput.length)
-    for(let iii = 0; iii < this._userInput.length; iii++) {
-      bytes[iii] = this._userInput.charCodeAt(iii)
+    const bytes = new Uint8Array(userInput.length)
+    for(let iii = 0; iii < userInput.length; iii++) {
+      bytes[iii] = userInput.charCodeAt(iii)
     }
     console.log('ARRAY BUFFER', bytes)
+    return bytes
   }
 
   convertArrayBufferToHexaDecimal = (buffer) => {
@@ -59,7 +61,6 @@ class App extends Component {
             ref={input => {this._userInput = input}}
           />
           <input type='submit' placeholder='Convert' />
-
         </form>
       </div>
     )

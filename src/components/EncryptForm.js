@@ -51,8 +51,8 @@ class EncryptForm extends Component {
             ).then(key => {
                 
                 key_object = key
-            }).catch(e => {
-                console.log('Error', e.message)
+            }).catch(error => {
+                this.setState({ error })
             })
         } else {
             console.log('Cryptography APi not Supported')
@@ -94,19 +94,17 @@ class EncryptForm extends Component {
         const { userInput, error } = this.state
         const isInvalid = userInput === ''
         return (
-            <div>
-                <form onSubmit={this.convertStringToArrayBuffer}>
-                    <input
-                        type='text'
-                        name='userInput'
-                        placeholder='Encrypt this text...'
-                        ref={input => {this._userInput = input}}
-                        onChange={this.onChange}
-                    />
-                    <button disabled={isInvalid} type='submit'>Convert</button>
-                    {error && <p>{error.message}</p>}
-                </form>
-            </div>
+            <form onSubmit={this.convertStringToArrayBuffer}>
+                <input
+                    type='text'
+                    name='userInput'
+                    placeholder='Encrypt this text...'
+                    ref={input => {this._userInput = input}}
+                    onChange={this.onChange}
+                />
+                <button disabled={isInvalid} type='submit'>Convert</button>
+                {error && <p className='error-message'>{error.message}</p>}
+            </form>
         )
     }
 }

@@ -3,12 +3,14 @@ import React, { Component } from 'react'
 class EncryptForm extends Component {
     state = {
         data: 'QNimate',
+        userInput: '',
+        error: null
     }
     _userInput = React.createRef()
     
     convertStringToArrayBuffer = (e) => {
         e.preventDefault()
-        console.log('input', this._userInput.value)
+        console.log('INPUT', this._userInput.value)
         // Instantiate 8-bit unsigned integers
         const bytes = new Uint8Array(this._userInput.value.length)
         for(let iii = 0; iii < this._userInput.value.length; iii++) {
@@ -34,20 +36,20 @@ class EncryptForm extends Component {
     generateKey = () => {
         const crypto = window.crypto || window.msCrypto
         let key_object = null
-        let promise_key = null
 
         if(crypto.subtle){
             console.log("Cryptography API supported")
             // Parameters:
-            // 1. Symmentrix Enxryption algorithm name and its requirements
+            // 1. Symmetric Encryption algorithm name and its requirements
             // 2. Boolean indicating extractable, which indicates whether or not the raw key material may be exported by the application
             // 3. Usage of the Key
-            promise_key = crypto.subtle.generateKey(
+            let promise_key = crypto.subtle.generateKey(
             {
                 name: 'AES- GCM',
                 length: 256
             }, true, ['encrypt', 'decrypt']
             ).then(key => {
+                
                 key_object = key
             }).catch(e => {
                 console.log('Error', e.message)
@@ -74,14 +76,23 @@ class EncryptForm extends Component {
             }).then(result => {
                 encrypted_data = new Uint8Array(result)
                 console.log('enxrypted_data', encrypted_data)
-            }).catch(e => {
-                console.log(e.message)
+            }).catch(error => {
+                this.setState({ error })
             }
         )
     }
 
-
+    /*
+        Non-encryption methods
+    */
+    onChange = event => {
+        this.setState({
+            [event.target.name]: event.target.value
+        })
+    }
     render() {
+        const { userInput, error } = this.state
+        const isInvalid = userInput === ''
         return (
             <div>
                 <form onSubmit={this.convertStringToArrayBuffer}>
@@ -90,8 +101,10 @@ class EncryptForm extends Component {
                         name='userInput'
                         placeholder='Encrypt this text...'
                         ref={input => {this._userInput = input}}
+                        onChange={this.onChange}
                     />
-                    <input type='submit' placeholder='Convert' />
+                    <button disabled={isInvalid} type='submit'>Convert</button>
+                    {error && <p>{error.message}</p>}
                 </form>
             </div>
         )

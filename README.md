@@ -28,9 +28,10 @@ Designed using Adobe XD
 ### Tools, frameworks, libraries, APIs, modules and/or other resources for MVP
 - [Web Crypto API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API): allows a script to use cryptographic primitives.
 - [Web Cryptography API by W3C documentation](https://www.w3.org/TR/WebCryptoAPI/)
+- [crypto.stackexchange.com](https://crypto.stackexchange.com/)
 - [Crypto101](https://www.crypto101.io/) - basic knowledge about cryptography
-- [Web Cryptography API Tutorial](http://qnimate.com/post-series/web-cryptography-api-tutorial/)
-- Frontend: React and Redux
+- AES-256-GCM algorithms for Encryption and decryption: [GCM Wiki](https://en.wikipedia.org/wiki/Galois/Counter_Mode)
+- Frontend: React
 
 
 ### Future Development
@@ -80,7 +81,7 @@ Favicon is made by [icongeek26](https://www.flaticon.com/authors/icongeek26) att
 I welcome any feedback, comments and questions about this project. Email me to misaki.koonce@gmail.com
 
 ## Technologies Used
-Git, GitHub, Adobe XD, ReactJS and Redux
+Git, GitHub, Adobe XD, React and Web Crypto API.
 
 ## License
 Copyright © 2020 under the MIT License

@@ -1,106 +1,67 @@
 import React, { Component } from 'react'
+import crypto from 'crypto'
 
 class EncryptForm extends Component {
     state = {
         data: 'QNimate',
         userInput: '',
-        error: null
-    }
-    _userInput = React.createRef()
-    
-    convertStringToArrayBuffer = (e) => {
-        e.preventDefault()
-        console.log('INPUT', this._userInput.value)
-        // Instantiate 8-bit unsigned integers
-        const bytes = new Uint8Array(this._userInput.value.length)
-        for(let iii = 0; iii < this._userInput.value.length; iii++) {
-          bytes[iii] = this._userInput.value.charCodeAt(iii)
-        }
-        console.log('ARRAY BUFFER', bytes)
-        this.convertArrayBufferViewToString(bytes)
-        // return bytes
+        KEY: '',
+        decipher: ''
     }
 
-    convertArrayBufferViewToString = (buffer) => {
-        let str = ''
-        for(let iii = 0; iii < buffer.byteLength; iii++) {
-            str += String.fromCharCode(buffer[iii])
-        }
+    encryptMessage(input, key) {
+        // Initialization Vector - 16 bytes
+        const iv = new Buffer(crypto.randomBytes(16), 'utf8')
+        const cipher = crypto.createCipheriv('aes-256-gcm', key, iv)
 
-        console.log('ARRAY TO STR', str)
-        this.generateKey()
-        // return str
+        let encoded = cipher.update(input, 'utf8', 'base64')
+        encoded += cipher.final('base64')
+        return [encoded, iv, cipher.getAuthTag()]
     }
 
-    // Generate Key for encryption and decryption
-    generateKey = () => {
-        const crypto = window.crypto || window.msCrypto
-        let key_object = null
+    decryptMessage(key, encoded, iv, authTag) {
+        const decipher = crypto.createDecipheriv('aes-2560-gcm', key, iv)
+        decipher.setAuthTag(authTag)
+        let text = decipher.update(encoded, 'base64', 'utf8')
+        text += decipher.final('utf8')
 
-        if(crypto.subtle){
-            console.log("Cryptography API supported")
-            // Parameters:
-            // 1. Symmetric Encryption algorithm name and its requirements
-            // 2. Boolean indicating extractable, which indicates whether or not the raw key material may be exported by the application
-            // 3. Usage of the Key
-            let promise_key = crypto.subtle.generateKey(
-            {
-                name: 'AES- GCM',
-                length: 256
-            }, true, ['encrypt', 'decrypt']
-            ).then(key => {
-                
-                key_object = key
-            }).catch(error => {
-                this.setState({ error })
-            })
-        } else {
-            console.log('Cryptography APi not Supported')
-        }
-    }
-
-    // 
-    initializeVector = () => {
-        // IV should be 16 bytes
-        const iv = crypto.getRandomValues(new Uint8Array(12))
-
-        this.encryptData(iv)
-    }
-
-    encryptData = (iv) => {
-        let encrypted_data = null
-        const encrypt_promise = crypto.subtle.encrypt(
-            {
-                name: '',
-                iv: iv
-            }).then(result => {
-                encrypted_data = new Uint8Array(result)
-                console.log('enxrypted_data', encrypted_data)
-            }).catch(error => {
-                this.setState({ error })
-            }
-        )
+        console.log(text)
     }
 
     /*
         Non-encryption methods
     */
-    onChange = event => {
+    handleSubmit = event => {
+        event.preventDefault()
+        const KEY = new Buffer(crypto.randomBytes(32), 'utf8')
+        // const aesCipher = this.aes256gcm(KEY)
+        const encrypt = this.encryptMessage(this.state.userInput, KEY)
+        console.log('encoded', encrypt[0])
+        console.log('iv', encrypt[1])
+        console.log('cipher text', encrypt[2])
+        return(
+            encrypt.map(elem => <p>{elem}</p>)
+        )
+        // const decrypt = this.decryptMessage(encrypted, iv, authTag)
+        // this.setState({ decipher: decrypted})
+    }
+
+    handleChange = event => {
         this.setState({
             [event.target.name]: event.target.value
         })
     }
+
     render() {
         const { userInput, error } = this.state
         const isInvalid = userInput === ''
         return (
-            <form onSubmit={this.convertStringToArrayBuffer}>
+            <form onSubmit={this.handleSubmit}>
                 <input
                     type='text'
                     name='userInput'
                     placeholder='Encrypt this text...'
-                    ref={input => {this._userInput = input}}
-                    onChange={this.onChange}
+                    onChange={this.handleChange}
                 />
                 <button disabled={isInvalid} type='submit'>Convert</button>
                 {error && <p className='error-message'>{error.message}</p>}

@@ -7,7 +7,8 @@ class EncryptForm extends Component {
         // KEY should be the user master password
         userKEY: '',
         isSubmitted: false,
-        ciphertext: null,
+        cipherText: null,
+        cipherTextLength: 0,
         decipher: ''
     }
 
@@ -37,7 +38,8 @@ class EncryptForm extends Component {
         const KEY = new Buffer(crypto.randomBytes(32), 'utf8')
         const [encrypted, iv, authTag] = this.encryptMessage(this.state.userInput, KEY)
         this.setState({
-            ciphertext: [...encrypted,]
+            cipherText: [...encrypted],
+            cipherTextLength: [...encrypted].length
         })
 
         const decrypted = this.decryptMessage(KEY, encrypted, iv, authTag)
@@ -55,7 +57,7 @@ class EncryptForm extends Component {
     }
 
     render() {
-        const { userInput, isSubmitted, ciphertext, decipher } = this.state
+        const { userInput, isSubmitted, cipherText, cipherTextLength, decipher } = this.state
         const isInvalid = userInput === ''
 
         return (
@@ -67,7 +69,8 @@ class EncryptForm extends Component {
                     onChange={this.handleChange}
                 />
                 <button disabled={isInvalid} type='submit'>Convert</button>
-                {ciphertext && <p className='show-message'>Cipher text: {ciphertext}</p>}
+                {cipherText && <p className='show-message'>Cipher text: {cipherText}</p>}
+                {cipherTextLength !== 0 && <p className='show-message'>Cipher text length: {cipherTextLength}</p>}
                 {isSubmitted && <p className='show-message'>Decipher text: {decipher}</p>}
             </form>
         )

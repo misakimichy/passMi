@@ -9,7 +9,7 @@ class EncryptForm extends Component {
         isSubmitted: false,
         cipherText: null,
         cipherTextLength: 0,
-        decipher: ''
+        decipher: '',
     }
 
     encryptMessage(input, key) {
@@ -37,14 +37,11 @@ class EncryptForm extends Component {
         // temporary KEY: this will be replaced with the user master password
         const KEY = new Buffer(crypto.randomBytes(32), 'utf8')
         const [encrypted, iv, authTag] = this.encryptMessage(this.state.userInput, KEY)
-        this.setState({
-            cipherText: [...encrypted],
-            cipherTextLength: [...encrypted].length
-        })
-
         const decrypted = this.decryptMessage(KEY, encrypted, iv, authTag)
    
         this.setState({
+            cipherText: encrypted,
+            cipherTextLength: encrypted.length,
             isSubmitted: true,
             decipher: decrypted,
         })

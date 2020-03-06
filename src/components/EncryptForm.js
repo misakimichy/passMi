@@ -4,7 +4,9 @@ import crypto from 'crypto'
 class EncryptForm extends Component {
     state = {
         userInput: '',
-        KEY: '',
+        // KEY should be the user master password
+        userKEY: '',
+        isSubmitted: false,
         decipher: ''
     }
 
@@ -30,27 +32,29 @@ class EncryptForm extends Component {
     */
     handleSubmit = event => {
         event.preventDefault()
+        // temporary KEY: this will be replaced with the user master password
         const KEY = new Buffer(crypto.randomBytes(32), 'utf8')
-        // const aesCipher = this.aes256gcm(KEY)
         const [encrypted, iv, authTag] = this.encryptMessage(this.state.userInput, KEY)
-        console.log('encoded', encrypted)
-        console.log('iv', iv)
-        console.log('cipher text', authTag)
-
         const decrypted = this.decryptMessage(KEY, encrypted, iv, authTag)
-        console.log('DECRYPtED MESSAGE:', decrypted)
-        // const decrypt = this.decryptMessage(encrypted, iv, authTag)
-        // this.setState({ decipher: decrypted})
+        const newState = {
+            ...this.state,
+            isSubmitted: true,
+            decipher: decrypted
+        }
+        
+        console.log('CHECK NEW STATE', newState)
+        this.setState({ newState })
+        console.log('CHECK UPDATED STATE', this.state)
     }
 
     handleChange = event => {
         this.setState({
-            [event.target.name]: event.target.value
+            [event.target.name]: event.target.value,
         })
     }
 
     render() {
-        const { userInput, error } = this.state
+        const { userInput, isSubmitted, decipher } = this.state
         const isInvalid = userInput === ''
         return (
             <form onSubmit={this.handleSubmit}>
@@ -61,7 +65,7 @@ class EncryptForm extends Component {
                     onChange={this.handleChange}
                 />
                 <button disabled={isInvalid} type='submit'>Convert</button>
-                {error && <p className='error-message'>{error.message}</p>}
+                {isSubmitted && <p>{decipher.value}</p>}
             </form>
         )
     }

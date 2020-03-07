@@ -2,21 +2,33 @@ import React, { Component } from 'react'
 import crypto from 'crypto'
 
 class EncryptForm extends Component {
-    state = {
-        userInput: '',
-        // KEY should be the user master password
-        userKEY: '',
-        isSubmitted: false,
-        cipherText: null,
-        cipherTextLength: 0,
-        decipher: '',
+    constructor(props) {
+        super(props)
+        this.state = {
+            masterPass: [],
+            userInput: '',
+            // KEY should be the user master password
+            userKEY: '',
+            isSubmitted: false,
+            cipherText: null,
+            cipherTextLength: 0,
+            decipher: '',
+        }
+        
+        if(!localStorage.getItem('masterPass')) {
+            this.checkMasterPassword()
+        }
     }
 
     checkMasterPassword = () => {
         const promptInput = prompt("Enter your master password")
         console.log('prompt test', promptInput)
-        localStorage.setItem('masterPass', promptInput)
-        console.log('LOCAL STORAGE', localStorage)
+        const KEY = new Buffer(crypto.randomBytes(32), 'utf8')
+        const encryptedMasterPass = this.encryptMessage(promptInput, KEY)
+        localStorage.setItem('masterPass', encryptedMasterPass)
+        // this.setState({
+        //     masterPass: encryptedMasterPass
+        // })
     }
 
     encryptMessage(input, key) {
@@ -63,11 +75,6 @@ class EncryptForm extends Component {
     render() {
         const { userInput, isSubmitted, cipherText, cipherTextLength, decipher } = this.state
         const isInvalid = userInput === ''
-        if(!localStorage.getItem('masterPass')) {
-            this.checkMasterPassword()
-        } else {
-            console.log("LOCAL STORAGE", localStorage)
-        }
         return (
             <form onSubmit={this.handleSubmit}>
                 <input

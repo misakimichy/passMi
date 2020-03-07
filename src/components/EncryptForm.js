@@ -12,6 +12,13 @@ class EncryptForm extends Component {
         decipher: '',
     }
 
+    checkMasterPassword = () => {
+        const promptInput = prompt("Enter your master password")
+        console.log('prompt test', promptInput)
+        localStorage.setItem('masterPass', promptInput)
+        console.log('LOCAL STORAGE', localStorage)
+    }
+
     encryptMessage(input, key) {
         // Initialization Vector - 16 bytes
         const iv = new Buffer(crypto.randomBytes(16), 'utf8')
@@ -56,7 +63,11 @@ class EncryptForm extends Component {
     render() {
         const { userInput, isSubmitted, cipherText, cipherTextLength, decipher } = this.state
         const isInvalid = userInput === ''
-
+        if(!localStorage.getItem('masterPass')) {
+            this.checkMasterPassword()
+        } else {
+            console.log("LOCAL STORAGE", localStorage)
+        }
         return (
             <form onSubmit={this.handleSubmit}>
                 <input

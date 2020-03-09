@@ -7,12 +7,10 @@ class EncryptForm extends Component {
         super(props)
         this.state = {
             message: '',
-            // userKEY: '',
             isSubmitted: false,
-            cipherText: null,
-            cipherTextLength: 0,
-            decipher: '',
-            isClicked: false
+            encryptedText: null,
+            encryptedTextLength: 0,
+            error: null
         }
     }
 
@@ -25,31 +23,30 @@ class EncryptForm extends Component {
     }
 
     encryptMessage(message, password) {
-        const salt = crypto.randomBytes(64)
-        // Add iterations for security
-        const iterations = Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000
-        const KEY = this.deriveKeyFromPassword(password, salt, Math.floor(iterations * 0.47 + 1337))
+        try {
+            const salt = crypto.randomBytes(64)
+            // Add iterations for security
+            const iterations = Math.floor(Math.random() * (99999 - 10000 + 1)) + 500
+            const KEY = this.deriveKeyFromPassword(password, salt, Math.floor(iterations * 0.47 + 1337))
+    
+            // Initialization Vector - 16 bytes
+            const iv = crypto.randomBytes(16)
+            const cipher = crypto.createCipheriv('aes-256-gcm', KEY, iv)
+    
+            // Update the cipher with data to be encrypted and close cipher
+            const encryptedData = Buffer.concat([cipher.update(message, 'utf8'), cipher.final()])
+    
+            // 16 bytes - from cipher for decryption
+            const authTag = cipher.getAuthTag()
+    
+            const output = Buffer.concat([salt, iv, authTag, Buffer.from(iterations.toString()), encryptedData]).toString('hex')
+            return `enc::${output}`
 
-        // Initialization Vector - 16 bytes
-        const iv = crypto.randomBytes(16)
-        const cipher = crypto.createCipheriv('aes-256-gcm', KEY, iv)
-
-        // Update the cipher with data to be encrypted and close cipher
-        const encryptedData = Buffer.concat([cipher.update(message, 'utf8'), cipher.final()])
-
-        // 16 bytes - from cipher for decryption
-        const authTag = cipher.getAuthTag()
-
-        const output = Buffer.concat([salt, iv, authTag, Buffer.from(iterations.toString()), encryptedData]).toString('hex')
-        return output
-    }
-
-    decryptMessage(password, encoded, iv, authTag) {
-        const decipher = crypto.createDecipheriv('aes-256-gcm', password, iv)
-        decipher.setAuthTag(authTag)
-        let text = decipher.update(encoded, 'base64', 'utf8')
-        text += decipher.final('utf8')
-        return text
+        } catch (error) {
+            this.setState({
+                error: error.message
+            })
+        }
     }
 
     /*
@@ -57,17 +54,16 @@ class EncryptForm extends Component {
     */
     handleSubmit = event => {
         event.preventDefault()
-        const userInput = this.checkMasterPassword()
-        const encryptedData = this.encryptMessage(this.state.message, userInput)
-        // const decrypted = this.decryptMessage(userInput, encrypted, iv, authTag)
-        console.log('ENCRYPTED', encryptedData)
+        const userEncryptPassword = this.checkMasterPassword()
+        const encryptedData = this.encryptMessage(this.state.message, userEncryptPassword)
+
         this.setState({
-            // userKEY: KEY,
-            cipherText: encryptedData,
-            cipherTextLength: encryptedData.length,
+            encryptedText: encryptedData,
+            encryptedTextLength: encryptedData.length,
             isSubmitted: true,
-            // decipher: decrypted,
         })
+
+        console.log('')
     }
 
     handleChange = event => {
@@ -76,15 +72,8 @@ class EncryptForm extends Component {
         })
     }
 
-    handleClick = event => {
-        event.preventDefault()
-        this.setState({
-            isClicked: true
-        })
-    }
-
     render() {
-        const { message, isSubmitted, cipherText, cipherTextLength, decipher, isClicked } = this.state
+        const { message, isSubmitted, encryptedText, encryptedTextLength, isClicked, error } = this.state
         const isInvalid = message === ''
 
         return (
@@ -97,11 +86,14 @@ class EncryptForm extends Component {
                         onChange={this.handleChange}
                     />
                     <button disabled={isInvalid} type='submit' className='button'>Convert</button>
-                    {cipherText && <p className='show-message'>Cipher text: {cipherText}</p>}
-                    {cipherTextLength !== 0 && <p className='show-message'>Cipher text length: {cipherTextLength}</p>}
+                    {encryptedText && <p className='show-message'>Encrypted text: {encryptedText}</p>}
+                    {encryptedTextLength !== 0 && <p className='show-message'>Encrypted text length: {encryptedTextLength}</p>}
                 </form>
-                {isSubmitted && <button onClick={this.handleClick} type='submit' className='button'>Decrypt this text!</button>}
-                {isClicked && <DecryptForm decipher={decipher} />}
+                { isSubmitted && error 
+                    ? <p>{error}</p>
+                    : null
+                }
+                {isSubmitted && <DecryptForm encryptedData={encryptedText} checkMasterPassword={this.checkMasterPassword }/>}
             </section>
         )
     }

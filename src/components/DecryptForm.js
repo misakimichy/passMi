@@ -2,9 +2,9 @@ import React from 'react'
 
 const DecryptForm = props => {
     return (
-        <div>Decrypt Form
+        <section className='container'>
             <p>Decipher text: {props.decipher}</p>
-        </div>
+        </section>
     )
 }
 

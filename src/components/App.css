@@ -41,7 +41,7 @@
   color: blue;
 }
 
-form {
+form, .container {
   width: 70%;
   border: 1px solid #efefef;
   padding: 30px;

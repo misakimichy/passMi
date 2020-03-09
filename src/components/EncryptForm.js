@@ -87,7 +87,7 @@ class EncryptForm extends Component {
         const isInvalid = userInput === ''
 
         return (
-            <div>
+            <section>
                 <form onSubmit={this.handleSubmit}>
                     <input
                         type='text'
@@ -101,7 +101,7 @@ class EncryptForm extends Component {
                 </form>
                 {isSubmitted && <button onClick={this.handleClick} type='submit' className='button'>Decrypt this text!</button>}
                 {isClicked && <DecryptForm userKey={userKEY} decipher={decipher} />}
-            </div>
+            </section>
         )
     }
 }

@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import crypto from 'crypto'
+import DecryptForm from './DecryptForm'
 
 class EncryptForm extends Component {
     constructor(props) {
@@ -13,6 +14,7 @@ class EncryptForm extends Component {
             cipherText: null,
             cipherTextLength: 0,
             decipher: '',
+            isClicked: false
         }
         
         if(!localStorage.getItem('masterPass')) {
@@ -59,6 +61,7 @@ class EncryptForm extends Component {
         const decrypted = this.decryptMessage(KEY, encrypted, iv, authTag)
    
         this.setState({
+            userKEY: KEY,
             cipherText: encrypted,
             cipherTextLength: encrypted.length,
             isSubmitted: true,
@@ -72,22 +75,33 @@ class EncryptForm extends Component {
         })
     }
 
+    handleClick = event => {
+        event.preventDefault()
+        this.setState({
+            isClicked: true
+        })
+    }
+
     render() {
-        const { userInput, isSubmitted, cipherText, cipherTextLength, decipher } = this.state
+        const { userKEY, userInput, isSubmitted, cipherText, cipherTextLength, decipher, isClicked } = this.state
         const isInvalid = userInput === ''
+
         return (
-            <form onSubmit={this.handleSubmit}>
-                <input
-                    type='text'
-                    name='userInput'
-                    placeholder='Encrypt this text...'
-                    onChange={this.handleChange}
-                />
-                <button disabled={isInvalid} type='submit'>Convert</button>
-                {cipherText && <p className='show-message'>Cipher text: {cipherText}</p>}
-                {cipherTextLength !== 0 && <p className='show-message'>Cipher text length: {cipherTextLength}</p>}
-                {isSubmitted && <p className='show-message'>Decipher text: {decipher}</p>}
-            </form>
+            <div>
+                <form onSubmit={this.handleSubmit}>
+                    <input
+                        type='text'
+                        name='userInput'
+                        placeholder='Encrypt this text...'
+                        onChange={this.handleChange}
+                    />
+                    <button disabled={isInvalid} type='submit' className='button'>Convert</button>
+                    {cipherText && <p className='show-message'>Cipher text: {cipherText}</p>}
+                    {cipherTextLength !== 0 && <p className='show-message'>Cipher text length: {cipherTextLength}</p>}
+                </form>
+                {isSubmitted && <button onClick={this.handleClick} type='submit' className='button'>Decrypt this text!</button>}
+                {isClicked && <DecryptForm userKey={userKEY} decipher={decipher} />}
+            </div>
         )
     }
 }

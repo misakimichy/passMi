@@ -51,16 +51,17 @@ form {
   align-items: center;
 }
 
-form > input {
+form > input, textarea {
   width: 60%;
-  font-size: 20px;
+  font-size: 18px;
   margin-bottom: 20px;
   border-radius: 3px;
 }
 
-form > button {
-  width: 100px;
+.button {
+  width: 200px;
   font-size: 16px;
   border-radius: 3px;
   color: black;
+  margin-bottom: 20px;
 }

@@ -25,12 +25,18 @@ class EncryptForm extends Component {
 
         // decrypt message from local storage
         const existingMessage = localStorage.getItem('message')
-        const message = decrypt(existingMessage, this.masterPassword)
-        this.setState({
-            decipher: message
-        })
-
-        return message
+        try {
+            const message = decrypt(existingMessage, this.masterPassword)
+            this.setState({
+                decipher: message
+            })
+            return message
+        } catch (error) {
+            console.log(error.message)
+            this.setState({
+                error: error.message
+            })
+        }
     }
 
     componentDidMount = () => {
@@ -65,28 +71,33 @@ class EncryptForm extends Component {
         const isInvalid = message === ''
 
         return (
-            <section>
-                <form onSubmit={this.handleSubmit}>
-                    <label>Message</label>
-                    <input
-                        type='text'
-                        name='message'
-                        onChange={this.handleChange}
-                        placeholder={decipher}
-                    />
-                    <button disabled={isInvalid} type='submit' className='button'>Update</button>
-                    {encryptedText && <p className='show-message'>Encrypted text: {encryptedText}</p>}
-                    {encryptedTextLength !== 0 && <p className='show-message'>Encrypted text length: {encryptedTextLength}</p>}
-                    <p>Decrypted Message: {decipher}</p>
-                </form>
-                { isSubmitted && error 
-                    ? <p>{error}</p>
-                    : null
-                }
-                {isSubmitted &&
-                    <p>Updated Message: {updatedMessage}</p>
-                }
-            </section>
+            !error
+                ?   <section>
+                        <form onSubmit={this.handleSubmit}>
+                            <label>Message</label>
+                            <input
+                                type='text'
+                                name='message'
+                                onChange={this.handleChange}
+                                placeholder={decipher}
+                            />
+                            <button disabled={isInvalid} type='submit' className='button'>Update</button>
+                            {encryptedText && <p className='show-message'>Encrypted text: {encryptedText}</p>}
+                            {encryptedTextLength !== 0 && <p className='show-message'>Encrypted text length: {encryptedTextLength}</p>}
+                            <p>Decrypted Message: {decipher}</p>
+                        </form>
+                        {isSubmitted && error
+                            ? <p>{error}</p>
+                            : null
+                        }
+                        {isSubmitted &&
+                            <p>Updated Message: {updatedMessage}</p>
+                        }
+                    </section>
+                :   <div>
+                        <h3 className='error-message'>{error}</h3>
+                        <p>Please refresh and enter the right password.</p>
+                    </div>
         )
     }
 }

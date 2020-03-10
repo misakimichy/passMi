@@ -7,8 +7,6 @@ class EncryptForm extends Component {
         this.state = {
             message: '',
             isSubmitted: false,
-            encryptedText: null,
-            encryptedTextLength: 0,
             decipher: null,
             updatedMessage: '',
             error: null
@@ -67,7 +65,7 @@ class EncryptForm extends Component {
     }
 
     render() {
-        const { message, isSubmitted, encryptedText, encryptedTextLength, decipher, updatedMessage, error } = this.state
+        const { message, isSubmitted, decipher, updatedMessage, error } = this.state
         const isInvalid = message === ''
 
         return (
@@ -82,8 +80,6 @@ class EncryptForm extends Component {
                                 placeholder={decipher}
                             />
                             <button disabled={isInvalid} type='submit' className='button'>Update</button>
-                            {encryptedText && <p className='show-message'>Encrypted text: {encryptedText}</p>}
-                            {encryptedTextLength !== 0 && <p className='show-message'>Encrypted text length: {encryptedTextLength}</p>}
                             <p>Decrypted Message: {decipher}</p>
                         </form>
                         {isSubmitted && error

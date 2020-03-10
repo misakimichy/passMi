@@ -13,15 +13,14 @@ class DecryptForm extends Component {
     }
     decryptMessage(password, cipherText) {
         try {
-            const cipherTextParts = cipherText.split('enc::')
-            if(cipherTextParts.length !== 2) {
+            // const cipherTextParts = cipherText.split('enc::')
+            if(cipherText.length !== 2) {
                 console.error("Couldn't determine the beginning of the cipherText. Maybe not encrypted by this method🧐")
             } else {
-                cipherText = cipherTextParts[1]
+                cipherText = cipherText[1]
             }
             
             const inputData = Buffer.from(cipherText, 'hex')
-
             // Split ciphertext into partials
             const salt = inputData.slice(0, 64)
             const iv = inputData.slice(64, 80)
@@ -42,7 +41,7 @@ class DecryptForm extends Component {
             }
         } catch (error) {
             this.setState({
-                error: error.message
+                error: "That's not the right master password 🧐"
             })
         }
     }
@@ -65,7 +64,6 @@ class DecryptForm extends Component {
         this.setState({
             decipher: decrypted,
             isClicked: true
-
         })
     }
 

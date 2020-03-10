@@ -40,7 +40,7 @@ class EncryptForm extends Component {
             // 16 bytes - from cipher for decryption
             const authTag = cipher.getAuthTag()
             const output = Buffer.concat([salt, iv, authTag, Buffer.from(iterations.toString()), encryptedData]).toString('hex')
-            return `enc::${output}`
+            return output
 
         } catch (error) {
             this.setState({

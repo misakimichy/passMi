@@ -18,6 +18,7 @@ class EncryptForm extends Component {
         return prompt("Enter your master password")
     }
 
+    // Convert user's password into cryptographic key
     deriveKeyFromPassword(password, salt, iterations) {
         return crypto.pbkdf2Sync(password, salt, iterations, 32, 'sha512')
     }
@@ -28,17 +29,16 @@ class EncryptForm extends Component {
             // Add iterations for security
             const iterations = Math.floor(Math.random() * (99999 - 10000 + 1)) + 500
             const KEY = this.deriveKeyFromPassword(password, salt, Math.floor(iterations * 0.47 + 1337))
-    
+            
             // Initialization Vector - 16 bytes
             const iv = crypto.randomBytes(16)
             const cipher = crypto.createCipheriv('aes-256-gcm', KEY, iv)
-    
+            
             // Update the cipher with data to be encrypted and close cipher
             const encryptedData = Buffer.concat([cipher.update(message, 'utf8'), cipher.final()])
     
             // 16 bytes - from cipher for decryption
             const authTag = cipher.getAuthTag()
-    
             const output = Buffer.concat([salt, iv, authTag, Buffer.from(iterations.toString()), encryptedData]).toString('hex')
             return `enc::${output}`
 
@@ -62,8 +62,6 @@ class EncryptForm extends Component {
             encryptedTextLength: encryptedData.length,
             isSubmitted: true,
         })
-
-        console.log('')
     }
 
     handleChange = event => {
@@ -73,7 +71,7 @@ class EncryptForm extends Component {
     }
 
     render() {
-        const { message, isSubmitted, encryptedText, encryptedTextLength, isClicked, error } = this.state
+        const { message, isSubmitted, encryptedText, encryptedTextLength, error } = this.state
         const isInvalid = message === ''
 
         return (
@@ -93,7 +91,13 @@ class EncryptForm extends Component {
                     ? <p>{error}</p>
                     : null
                 }
-                {isSubmitted && <DecryptForm encryptedData={encryptedText} checkMasterPassword={this.checkMasterPassword }/>}
+                {isSubmitted &&
+                    <DecryptForm
+                        encryptedData={encryptedText}
+                        checkMasterPassword={this.checkMasterPassword }
+                        deriveKeyFromPassword={this.deriveKeyFromPassword}
+                    />
+                }
             </section>
         )
     }

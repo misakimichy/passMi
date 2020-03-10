@@ -39,6 +39,12 @@
 
 .show-message {
   color: blue;
+  width: 70%;
+  word-wrap: break-word;
+}
+
+.error-message {
+  color: red;
 }
 
 form, .container {

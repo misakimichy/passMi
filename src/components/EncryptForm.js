@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
-import crypto from 'crypto'
-import DecryptForm from './DecryptForm'
+import { encrypt, decrypt } from '../crypto'
 
 class EncryptForm extends Component {
     constructor(props) {
@@ -10,43 +9,33 @@ class EncryptForm extends Component {
             isSubmitted: false,
             encryptedText: null,
             encryptedTextLength: 0,
+            decipher: null,
+            updatedMessage: '',
             error: null
         }
+        this.masterPassword = null
     }
 
-    checkMasterPassword = () => {
-        return prompt("Enter your master password")
-    }
-
-    // Convert user's password into cryptographic key
-    deriveKeyFromPassword(password, salt, iterations) {
-        return crypto.pbkdf2Sync(password, salt, iterations, 32, 'sha512')
-    }
-
-    encryptMessage(message, password) {
-        try {
-            const salt = crypto.randomBytes(64)
-            // Add iterations for security
-            const iterations = Math.floor(Math.random() * (99999 - 10000 + 1)) + 500
-            const KEY = this.deriveKeyFromPassword(password, salt, Math.floor(iterations * 0.47 + 1337))
-            
-            // Initialization Vector - 16 bytes
-            const iv = crypto.randomBytes(16)
-            const cipher = crypto.createCipheriv('aes-256-gcm', KEY, iv)
-            
-            // Update the cipher with data to be encrypted and close cipher
-            const encryptedData = Buffer.concat([cipher.update(message, 'utf8'), cipher.final()])
-    
-            // 16 bytes - from cipher for decryption
-            const authTag = cipher.getAuthTag()
-            const output = Buffer.concat([salt, iv, authTag, Buffer.from(iterations.toString()), encryptedData]).toString('hex')
-            return output
-
-        } catch (error) {
-            this.setState({
-                error: error.message
-            })
+    // unlock app when page first loads, retrieving user's secret message
+    unlock() {
+        // if first time using app, initialize empty message in local storage
+        if(!localStorage.getItem('message')) {
+            localStorage.setItem('message', encrypt("", this.masterPassword))
         }
+
+        // decrypt message from local storage
+        const existingMessage = localStorage.getItem('message')
+        const message = decrypt(existingMessage, this.masterPassword)
+        this.setState({
+            decipher: message
+        })
+
+        return message
+    }
+
+    componentDidMount = () => {
+        this.masterPassword = prompt("Enter your master password")
+        this.unlock()
     }
 
     /*
@@ -54,13 +43,14 @@ class EncryptForm extends Component {
     */
     handleSubmit = event => {
         event.preventDefault()
-        const userEncryptPassword = this.checkMasterPassword()
-        const encryptedData = this.encryptMessage(this.state.message, userEncryptPassword)
+
+        const encryptedMessage = encrypt(this.state.message, this.masterPassword)
+        localStorage.setItem('message', encryptedMessage)
+        const decryptedMessage = decrypt(encryptedMessage, this.masterPassword)
 
         this.setState({
-            encryptedText: encryptedData,
-            encryptedTextLength: encryptedData.length,
             isSubmitted: true,
+            updatedMessage: decryptedMessage
         })
     }
 
@@ -71,32 +61,30 @@ class EncryptForm extends Component {
     }
 
     render() {
-        const { message, isSubmitted, encryptedText, encryptedTextLength, error } = this.state
+        const { message, isSubmitted, encryptedText, encryptedTextLength, decipher, updatedMessage, error } = this.state
         const isInvalid = message === ''
 
         return (
             <section>
                 <form onSubmit={this.handleSubmit}>
+                    <label>Message</label>
                     <input
                         type='text'
                         name='message'
-                        placeholder='Encrypt this text...'
                         onChange={this.handleChange}
+                        placeholder={decipher}
                     />
-                    <button disabled={isInvalid} type='submit' className='button'>Convert</button>
+                    <button disabled={isInvalid} type='submit' className='button'>Update</button>
                     {encryptedText && <p className='show-message'>Encrypted text: {encryptedText}</p>}
                     {encryptedTextLength !== 0 && <p className='show-message'>Encrypted text length: {encryptedTextLength}</p>}
+                    <p>Decrypted Message: {decipher}</p>
                 </form>
                 { isSubmitted && error 
                     ? <p>{error}</p>
                     : null
                 }
                 {isSubmitted &&
-                    <DecryptForm
-                        encryptedData={encryptedText}
-                        checkMasterPassword={this.checkMasterPassword }
-                        deriveKeyFromPassword={this.deriveKeyFromPassword}
-                    />
+                    <p>Updated Message: {updatedMessage}</p>
                 }
             </section>
         )

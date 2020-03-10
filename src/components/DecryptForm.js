@@ -11,13 +11,13 @@ class DecryptForm extends Component {
             error: null
         }
     }
-    decryptMessage(password, cipherText) {
+    decryptMessage(cipherText, password) {
         try {
-            // const cipherTextParts = cipherText.split('enc::')
-            if(cipherText.length !== 2) {
+            const cipherTextParts = cipherText.split('enc::')
+            if(cipherTextParts.length !== 2) {
                 console.error("Couldn't determine the beginning of the cipherText. Maybe not encrypted by this method🧐")
             } else {
-                cipherText = cipherText[1]
+                cipherText = cipherTextParts[1]
             }
             
             const inputData = Buffer.from(cipherText, 'hex')
@@ -60,7 +60,7 @@ class DecryptForm extends Component {
     handleClick = event => {
         event.preventDefault()
         const userDecryptPassword = this.props.checkMasterPassword()
-        const decrypted = this.decryptMessage(userDecryptPassword, this.props.encryptedData)
+        const decrypted = this.decryptMessage(this.props.encryptedData, userDecryptPassword)
         this.setState({
             decipher: decrypted,
             isClicked: true

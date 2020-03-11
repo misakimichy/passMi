@@ -5,11 +5,24 @@ class EncryptForm extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            message: '',
             isSubmitted: false,
-            decipher: null,
-            updatedMessage: '',
-            error: null
+            decipher: {
+                website: '',
+                email: '',
+                password: ''
+            },
+            error: null,
+            accountRawData: {
+                website: '',
+                email: '',
+                password: ''
+            },
+            accounts: [],
+            updatedMessage: {
+                website: '',
+                email: '',
+                password: ''
+            }
         }
         this.masterPassword = null
     }
@@ -26,7 +39,11 @@ class EncryptForm extends Component {
         try {
             const message = decrypt(existingMessage, this.masterPassword)
             this.setState({
-                decipher: message
+                decipher: {
+                    website: message.website,
+                    email: message.email,
+                    password: message.password
+                }
             })
             return message
         } catch (error) {
@@ -44,47 +61,80 @@ class EncryptForm extends Component {
 
     handleSubmit = event => {
         event.preventDefault()
-
-        const encryptedMessage = encrypt(this.state.message, this.masterPassword)
+        this.createAccount()
+        const encryptedMessage = encrypt(JSON.stringify(this.state.accountRawData), this.masterPassword)
         localStorage.setItem('message', encryptedMessage)
-        const decryptedMessage = decrypt(encryptedMessage, this.masterPassword)
+        const decryptedMessage = decrypt(localStorage.getItem('message'), this.masterPassword)
 
         this.setState({
             isSubmitted: true,
-            updatedMessage: decryptedMessage
+            updatedMessage: {
+                website: decryptedMessage.website,
+                email: decryptedMessage.email,
+                password: decryptedMessage.password
+            }
         })
     }
 
     handleChange = event => {
         this.setState({
-            [event.target.name]: event.target.value,
+            accountRawData: {
+                ...this.state.accountRawData,
+                [event.target.name]: event.target.value
+            }
         })
     }
 
+    createAccount() {
+        const { website, email, password } = this.state.accountRawData
+        this.setState(prevState => ({
+            ...prevState,
+            accounts: prevState.accounts.push(new Account(website, email, password))
+        }))
+    }
+
     render() {
-        const { message, isSubmitted, decipher, updatedMessage, error } = this.state
-        const isInvalid = message === ''
+        const { decipher, isSubmitted, updatedMessage, error } = this.state
+        const isInvalid = decipher.website === '' || decipher.email === '' || decipher.password === ''
+        const hasData = decipher.website !== '' || decipher.email !== '' || decipher.password !== ''
 
         return (
             !error
                 ?   <section>
                         <form onSubmit={this.handleSubmit}>
-                            <label>Message</label>
+                            <label>Website</label>
                             <input
                                 type='text'
-                                name='message'
+                                name='website'
                                 onChange={this.handleChange}
-                                placeholder={decipher}
+                                placeholder={hasData ? decipher.website : null}
+                            />
+                            <label>Login Email</label>
+                            <input
+                                type='text'
+                                name='email'
+                                onChange={this.handleChange}
+                                placeholder={hasData ? decipher.email : null}
+                            />
+                            <label>Password</label>
+                            <input
+                                type='password'
+                                name='password'
+                                onChange={this.handleChange}
+                                placeholder={hasData ? decipher.password : null}
+                                autoComplete='on'
                             />
                             <button disabled={isInvalid} type='submit' className='button'>Update</button>
-                            <p>Decrypted Message: {decipher}</p>
                         </form>
                         {isSubmitted && error
                             ? <p>{error}</p>
                             : null
                         }
                         {isSubmitted &&
-                            <p>Updated Message: {updatedMessage}</p>
+                            <div>
+                                <p>Updated Website: {updatedMessage.website}</p>
+                                <p>Updated email: {updatedMessage.email}</p>
+                            </div>
                         }
                     </section>
                 :   <div>
@@ -94,5 +144,11 @@ class EncryptForm extends Component {
         )
     }
 }
-
 export default EncryptForm
+
+class Account {
+    constructor(website, email, password) {
+        this.website = website
+        this.email = email
+        this.password = password
+    }

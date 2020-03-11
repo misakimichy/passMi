@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import { encrypt, decrypt } from '../crypto'
 
 class EncryptForm extends Component {
@@ -16,27 +17,21 @@ class EncryptForm extends Component {
                 website: '',
                 email: '',
                 password: ''
-            },
-            updatedMessage: {
-                website: '',
-                email: '',
-                password: ''
             }
         }
-        this.masterPassword = null
     }
 
     // unlock app when page first loads, retrieving user's secret message
     unlock() {
         // if first time using app, initialize empty message in local storage
         if(!localStorage.getItem('message')) {
-            localStorage.setItem('message', encrypt("", this.masterPassword))
+            localStorage.setItem('message', encrypt("", this.props.masterPassword))
         }
 
         // decrypt message from local storage
         const existingMessage = localStorage.getItem('message')
         try {
-            const message = decrypt(existingMessage, this.masterPassword)
+            const message = decrypt(existingMessage, this.props.masterPassword)
             this.setState({
                 decipher: {
                     website: message.website,
@@ -53,21 +48,20 @@ class EncryptForm extends Component {
         }
     }
 
-    componentDidMount = () => {
-        this.masterPassword = prompt("Enter your master password")
+    componentDidMount() {
         this.unlock()
     }
 
     handleSubmit = event => {
         event.preventDefault()
         // this.createAccount()
-        const encryptedMessage = encrypt(JSON.stringify(this.state.accountRawData), this.masterPassword)
+        const encryptedMessage = encrypt(JSON.stringify(this.state.accountRawData), this.props.masterPassword)
         localStorage.setItem('message', encryptedMessage)
-        const decryptedMessage = decrypt(localStorage.getItem('message'), this.masterPassword)
+        const decryptedMessage = decrypt(localStorage.getItem('message'), this.props.masterPassword)
 
         this.setState({
             isSubmitted: true,
-            updatedMessage: {
+            decipher: {
                 website: decryptedMessage.website,
                 email: decryptedMessage.email,
                 password: decryptedMessage.password
@@ -85,7 +79,7 @@ class EncryptForm extends Component {
     }
 
     render() {
-        const { decipher, isSubmitted, updatedMessage, error, accountRawData } = this.state
+        const { decipher, isSubmitted, error, accountRawData } = this.state
         const isInvalid = accountRawData.website === '' || accountRawData.email === '' || accountRawData.password === ''
         const hasData = decipher.website !== '' || decipher.email !== '' || decipher.password !== ''
         return (
@@ -122,8 +116,8 @@ class EncryptForm extends Component {
                         }
                         {isSubmitted &&
                             <div>
-                                <p>Updated Website: {updatedMessage.website}</p>
-                                <p>Updated email: {updatedMessage.email}</p>
+                                <p>Updated Website: {decipher.website}</p>
+                                <p>Updated email: {decipher.email}</p>
                             </div>
                         }
                     </section>
@@ -133,6 +127,10 @@ class EncryptForm extends Component {
                     </div>
         )
     }
+}
+
+EncryptForm.propTypes = {
+    masterPassword: PropTypes.string.isRequired
 }
 export default EncryptForm
 

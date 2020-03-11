@@ -42,9 +42,6 @@ class EncryptForm extends Component {
         this.unlock()
     }
 
-    /*
-        Non-encryption methods
-    */
     handleSubmit = event => {
         event.preventDefault()
 

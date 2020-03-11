@@ -49,10 +49,8 @@ export const decrypt = (cipherText, password) => {
     decipher.setAuthTag(authTag)
     const decrypted = decipher.update(encryptedData, 'binary', 'utf-8') + decipher.final('utf-8')
     try {
-        console.log('JSON DECRYPT', JSON.parse(decrypted))
         return JSON.parse(decrypted)
     } catch (error) {
-        console.log('DECRYPTED', decrypted)
         return decrypted
     }
 }

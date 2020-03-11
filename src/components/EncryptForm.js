@@ -17,7 +17,6 @@ class EncryptForm extends Component {
                 email: '',
                 password: ''
             },
-            accounts: [],
             updatedMessage: {
                 website: '',
                 email: '',
@@ -61,7 +60,7 @@ class EncryptForm extends Component {
 
     handleSubmit = event => {
         event.preventDefault()
-        this.createAccount()
+        // this.createAccount()
         const encryptedMessage = encrypt(JSON.stringify(this.state.accountRawData), this.masterPassword)
         localStorage.setItem('message', encryptedMessage)
         const decryptedMessage = decrypt(localStorage.getItem('message'), this.masterPassword)
@@ -85,19 +84,10 @@ class EncryptForm extends Component {
         })
     }
 
-    createAccount() {
-        const { website, email, password } = this.state.accountRawData
-        this.setState(prevState => ({
-            ...prevState,
-            accounts: prevState.accounts.push(new Account(website, email, password))
-        }))
-    }
-
     render() {
-        const { decipher, isSubmitted, updatedMessage, error } = this.state
-        const isInvalid = decipher.website === '' || decipher.email === '' || decipher.password === ''
+        const { decipher, isSubmitted, updatedMessage, error, accountRawData } = this.state
+        const isInvalid = accountRawData.website === '' || accountRawData.email === '' || accountRawData.password === ''
         const hasData = decipher.website !== '' || decipher.email !== '' || decipher.password !== ''
-
         return (
             !error
                 ?   <section>
@@ -146,9 +136,10 @@ class EncryptForm extends Component {
 }
 export default EncryptForm
 
-class Account {
-    constructor(website, email, password) {
-        this.website = website
-        this.email = email
-        this.password = password
-    }
+// class Account {
+//     constructor(website, email, password) {
+//         this.website = website
+//         this.email = email
+//         this.password = password
+//     }
+// }

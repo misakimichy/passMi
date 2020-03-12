@@ -31,7 +31,7 @@ class App extends Component {
         : <div className="App">
             <Switch>
               <Route exact path='/' render={() => <EncryptForm masterPassword={this.state.masterPassword} />} />
-              <Route component={<NotFound />} />
+              <Route component={NotFound} />
             </Switch>
           </div>}
       </Router>

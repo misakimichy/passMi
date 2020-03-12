@@ -36,7 +36,7 @@ class MasterPassword extends Component {
                     onChange={this.handleChange}
                     autoComplete='on'
                 />
-                <button disabled={isInvalid} type='submit'>Submit</button>
+                <button className='button' disabled={isInvalid} type='submit'>Submit</button>
             </form>
         )
     }

@@ -65,14 +65,41 @@ form > input, textarea {
 }
 
 .button {
-  width: 200px;
-  font-size: 16px;
-  border-radius: 3px;
+	--offset: 10px;
+	--border-size: 2px;
+	
+	display: block;
+	position: relative;
+	padding: 1.5em 3em;
+	border: 0;
+	background: transparent;
+	color: #ffa500;
+	text-transform: uppercase;
+	letter-spacing: .2em;
+	outline: none;
+	cursor: pointer;
+	font-weight: bold;
+	border-radius: 0;
+	box-shadow: inset 0 0 0 var(--border-size) currentcolor;
+	transition: background .8s ease;
+}
+
+.button > a {
   color: black;
-  margin-bottom: 20px;
+  text-decoration: none;
+}
+
+.button:hover {
+  background: rgba(100, 0, 0, .03);
 }
 
 .account-container {
   border: 1px solid #efefef;
   border-radius: 3px;
+  width: 60%;
+  margin: 0 auto 10px auto;
+}
+
+.site-name {
+  font-size: 24px;
 }

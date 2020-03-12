@@ -85,8 +85,9 @@ $ npm run start
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Credit
-Favicon is made by [icongeek26](https://www.flaticon.com/authors/icongeek26) attributed from [flaticon](flaticon.com)
+- Favicon is made by [icongeek26](https://www.flaticon.com/authors/icongeek26) attributed from [flaticon](flaticon.com)
 
+- Button design is by [Emanuel Gonçalves](https://codepen.io/emanuelgsouza) from [Codepen](https://codepen.io/)
 
 ## Known Bugs
 - No known bugs

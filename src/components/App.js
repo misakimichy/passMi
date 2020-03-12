@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import './App.css'
 import MasterPassword from './MasterPassword'
+import Accounts from './Accounts'
+import Account from './Account'
 import EncryptForm from './EncryptForm'
 import NotFound from './NotFound'
 
@@ -30,7 +32,9 @@ class App extends Component {
           />
         : <div className="App">
             <Switch>
-              <Route exact path='/' render={() => <EncryptForm masterPassword={this.state.masterPassword} />} />
+              <Route exact path='/' render={() => <Accounts masterPassword={this.state.masterPassword}  />} />
+              <Route  path='/' render={() => <EncryptForm masterPassword={this.state.masterPassword} />} />
+              <Route path='/new' render={() => <Account />} />
               <Route component={NotFound} />
             </Switch>
           </div>}

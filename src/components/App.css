@@ -71,3 +71,8 @@ form > input, textarea {
   color: black;
   margin-bottom: 20px;
 }
+
+.account-container {
+  border: 1px solid #efefef;
+  border-radius: 3px;
+}

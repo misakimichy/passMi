@@ -12,9 +12,9 @@ const Account = props => {
 }
 
 Account.propTypes = {
-    website: PropTypes.string.isRequired,
-    email: PropTypes.string.isRequired,
-    password: PropTypes.string.isRequired
+    website: PropTypes.string,
+    email: PropTypes.string,
+    password: PropTypes.string
 }
 
 export default Account

@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { withRouter, Redirect } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { encrypt, decrypt } from '../crypto'
 
@@ -17,39 +18,8 @@ class EncryptForm extends Component {
                 website: '',
                 email: '',
                 password: ''
-            }
+            },
         }
-    }
-
-    // unlock app when page first loads, retrieving user's secrets
-    unlock() {
-        // if first time using app, initialize empty secrets in local storage
-        if(!localStorage.getItem('secrets')) {
-            localStorage.setItem('secrets', encrypt("", this.props.masterPassword))
-        }
-
-        // decrypt db from local storage
-        const secrets = localStorage.getItem('secrets')
-        try {
-            const decrypted = decrypt(secrets, this.props.masterPassword)
-            this.setState({
-                decipher: {
-                    website: decrypted.website,
-                    email: decrypted.email,
-                    password: decrypted.password
-                }
-            })
-            return decrypted
-        } catch (error) {
-            console.log(error.message)
-            this.setState({
-                error: error.message
-            })
-        }
-    }
-
-    componentDidMount() {
-        this.unlock()
     }
 
     handleSubmit = event => {
@@ -65,8 +35,11 @@ class EncryptForm extends Component {
                 website: decrypted.website,
                 email: decrypted.email,
                 password: decrypted.password
-            }
+            },
         })
+        if(this.state.isSubmitted) {
+            this.props.history.push('/')
+        }
     }
 
     handleChange = event => {
@@ -82,6 +55,9 @@ class EncryptForm extends Component {
         const { decipher, isSubmitted, error, accountRawData } = this.state
         const isInvalid = accountRawData.website === '' || accountRawData.email === '' || accountRawData.password === ''
         const hasData = decipher.website !== '' || decipher.email !== '' || decipher.password !== ''
+        if(isSubmitted) {
+            return <Redirect to='/' />
+        }
         return (
             !error
                 ?   <section>
@@ -114,12 +90,6 @@ class EncryptForm extends Component {
                             ? <p>{error}</p>
                             : null
                         }
-                        {isSubmitted &&
-                            <div>
-                                <p>Updated Website: {decipher.website}</p>
-                                <p>Updated email: {decipher.email}</p>
-                            </div>
-                        }
                     </section>
                 :   <div>
                         <h3 className='error-message'>{error}</h3>
@@ -132,12 +102,4 @@ class EncryptForm extends Component {
 EncryptForm.propTypes = {
     masterPassword: PropTypes.string.isRequired
 }
-export default EncryptForm
-
-// class Account {
-//     constructor(website, email, password) {
-//         this.website = website
-//         this.email = email
-//         this.password = password
-//     }
-// }
+export default withRouter(EncryptForm)

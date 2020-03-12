@@ -64,9 +64,7 @@ class Accounts extends Component {
         return(
             !error
             ?   <div>
-                    <button className='button'>
-                        <Link to='/new'>Add New</Link>
-                    </button>
+                    <Link to='/new' className='button button-link'>Add New</Link>
                     {Object.keys(accounts).map(accountId =>
                         <Account
                             key={accountId}

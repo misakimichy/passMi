@@ -84,9 +84,11 @@ form > input, textarea {
 	transition: background .8s ease;
 }
 
+
 .button > a {
   color: black;
   text-decoration: none;
+  width: 100;
 }
 
 .button:hover {

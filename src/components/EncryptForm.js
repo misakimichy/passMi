@@ -24,7 +24,6 @@ class EncryptForm extends Component {
 
     handleSubmit = event => {
         event.preventDefault()
-        // this.createAccount()
         const secrets = encrypt(JSON.stringify(this.state.accountRawData), this.props.masterPassword)
         localStorage.setItem('secrets', secrets)
         const decrypted = decrypt(localStorage.getItem('secrets'), this.props.masterPassword)

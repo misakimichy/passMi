@@ -64,16 +64,29 @@ class Accounts extends Component {
         return(
             !error
             ?   <div>
-                    <div className='link-container'>
-                        <Link to='/new' className='button button-link'>Add New</Link>
-                    </div>
                     {Object.keys(accounts).map(accountId =>
+                    <div key={accountId}>
+                        <div className='link-container'>
+                            <Link
+                                className='button button-link'
+                                to={{
+                                    pathname: '/new',
+                                    state: {
+                                        website: accounts[accountId].website,
+                                        email: accounts[accountId].email,
+                                        password: accounts[accountId].password
+                                    }
+                                }}
+                            >Edit
+                            </Link>
+                        </div>
                         <Account
                             key={accountId}
                             website={accounts[accountId].website}
                             email={accounts[accountId].email}
                             password={accounts[accountId].password}
                         />
+                    </div>
                     )}
                 </div>
             :   <div>

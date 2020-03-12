@@ -33,7 +33,7 @@ class App extends Component {
         : <div className="App">
             <Switch>
               <Route exact path='/' render={() => <Accounts masterPassword={this.state.masterPassword}  />} />
-              <Route path='/new' render={props => <EncryptForm masterPassword={this.state.masterPassword} />} />
+              <Route path='/new' render={props => <EncryptForm masterPassword={this.state.masterPassword} {...props}/>} />
               <Route path='/account' render={() => <Account />} />
               <Route component={NotFound} />
             </Switch>

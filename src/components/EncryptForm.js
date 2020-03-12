@@ -51,9 +51,10 @@ class EncryptForm extends Component {
     }
 
     render() {
-        const { decipher, isSubmitted, error, accountRawData } = this.state
+        const { isSubmitted, error, accountRawData } = this.state
+        const { website, email, password } = this.props.location.state
         const isInvalid = accountRawData.website === '' || accountRawData.email === '' || accountRawData.password === ''
-        const hasData = decipher.website !== '' || decipher.email !== '' || decipher.password !== ''
+        const hasData = website !== '' || website !== '' || website !== ''
         if(isSubmitted) {
             return <Redirect to='/' />
         }
@@ -66,21 +67,21 @@ class EncryptForm extends Component {
                                 type='text'
                                 name='website'
                                 onChange={this.handleChange}
-                                placeholder={hasData ? decipher.website : null}
+                                placeholder={hasData && website}
                             />
                             <label>Login Email</label>
                             <input
                                 type='text'
                                 name='email'
                                 onChange={this.handleChange}
-                                placeholder={hasData ? decipher.email : null}
+                                placeholder={hasData && email}
                             />
                             <label>Password</label>
                             <input
                                 type='password'
                                 name='password'
                                 onChange={this.handleChange}
-                                placeholder={hasData ? decipher.password : null}
+                                placeholder={hasData && password}
                                 autoComplete='on'
                             />
                             <button disabled={isInvalid} type='submit' className='button'>Save</button>

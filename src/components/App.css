@@ -74,7 +74,8 @@ form > input, textarea {
 	border: 0;
 	background: transparent;
 	color: #ffa500;
-	text-transform: uppercase;
+  text-transform: uppercase;
+  text-decoration: none;
 	letter-spacing: .2em;
 	outline: none;
 	cursor: pointer;

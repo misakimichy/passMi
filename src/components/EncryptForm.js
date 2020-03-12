@@ -83,7 +83,7 @@ class EncryptForm extends Component {
                                 placeholder={hasData ? decipher.password : null}
                                 autoComplete='on'
                             />
-                            <button disabled={isInvalid} type='submit' className='button'>Update</button>
+                            <button disabled={isInvalid} type='submit' className='button'>Save</button>
                         </form>
                         {isSubmitted && error
                             ? <p>{error}</p>

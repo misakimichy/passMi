@@ -21,25 +21,25 @@ class EncryptForm extends Component {
         }
     }
 
-    // unlock app when page first loads, retrieving user's secret message
+    // unlock app when page first loads, retrieving user's secrets
     unlock() {
-        // if first time using app, initialize empty message in local storage
-        if(!localStorage.getItem('message')) {
-            localStorage.setItem('message', encrypt("", this.props.masterPassword))
+        // if first time using app, initialize empty secrets in local storage
+        if(!localStorage.getItem('secrets')) {
+            localStorage.setItem('secrets', encrypt("", this.props.masterPassword))
         }
 
-        // decrypt message from local storage
-        const existingMessage = localStorage.getItem('message')
+        // decrypt db from local storage
+        const secrets = localStorage.getItem('secrets')
         try {
-            const message = decrypt(existingMessage, this.props.masterPassword)
+            const decrypted = decrypt(secrets, this.props.masterPassword)
             this.setState({
                 decipher: {
-                    website: message.website,
-                    email: message.email,
-                    password: message.password
+                    website: decrypted.website,
+                    email: decrypted.email,
+                    password: decrypted.password
                 }
             })
-            return message
+            return decrypted
         } catch (error) {
             console.log(error.message)
             this.setState({
@@ -55,16 +55,16 @@ class EncryptForm extends Component {
     handleSubmit = event => {
         event.preventDefault()
         // this.createAccount()
-        const encryptedMessage = encrypt(JSON.stringify(this.state.accountRawData), this.props.masterPassword)
-        localStorage.setItem('message', encryptedMessage)
-        const decryptedMessage = decrypt(localStorage.getItem('message'), this.props.masterPassword)
+        const secrets = encrypt(JSON.stringify(this.state.accountRawData), this.props.masterPassword)
+        localStorage.setItem('secrets', secrets)
+        const decrypted = decrypt(localStorage.getItem('secrets'), this.props.masterPassword)
 
         this.setState({
             isSubmitted: true,
             decipher: {
-                website: decryptedMessage.website,
-                email: decryptedMessage.email,
-                password: decryptedMessage.password
+                website: decrypted.website,
+                email: decrypted.email,
+                password: decrypted.password
             }
         })
     }

@@ -19,12 +19,11 @@ This is an end-to-end encrypted password manager build with Web Cryptography API
 - Scalable enough to work in the backend(C#) and frontend(React), which I can keep working on after graduating from bootcamp.
 
 
-## MVP of this application:
-- A user can type a message with a secret key in the text box and the text will be shown as a ciphertext. Once the user types the secret key, it gets decrypted and shows the original message.
-- Use AES-GCM, one of the most secure cipher, for encryption.
+## About his application:
+- A user can unlock their information to type their master password.
+- A user can add a new account with website name, login email and password.
+- A user can edit the information.
 
-<img src='./img/mvp-app.jpg' alt='mvp app design' />
-Designed using Adobe XD
 
 ## Tools, frameworks, libraries, APIs, modules and/or other resources for MVP
 - [Web Crypto API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API) - allows a script to use cryptographic primitives.
@@ -97,7 +96,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 I welcome any feedback, comments and questions about this project. Email me to misaki.koonce@gmail.com
 
 ## Technologies Used
-Git, GitHub, Adobe XD, React and Web Crypto API.
+Git, GitHub, React and Web Crypto API.
 
 ## License
 Copyright © 2020 under the MIT License

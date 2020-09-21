@@ -50,7 +50,8 @@
   color: red;
 }
 
-form, .container {
+form,
+.container {
   width: 70%;
   border: 1px solid #efefef;
   padding: 30px;
@@ -60,7 +61,8 @@ form, .container {
   align-items: center;
 }
 
-form > input, textarea {
+form > input,
+textarea {
   width: 60%;
   font-size: 18px;
   margin-bottom: 20px;
@@ -98,7 +100,6 @@ form > input, textarea {
   border-left-color: transparent;
   border-bottom-color: var(--orange);
   border-right-color: var(--orange);
-
 }
 
 .button::before {
@@ -116,14 +117,13 @@ form > input, textarea {
   height: 100%;
 }
 
-
 .button-link {
   text-decoration: none;
   margin-bottom: 20px;
 }
 
 .button:hover {
-  background: rgba(100, 0, 0, .03);
+  background: rgba(100, 0, 0, 0.03);
 }
 
 .link-container {
